@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(head = ~{::head}, main = ~{::main})}">
+
+<head th:replace="~{fragments/head :: head(links = ~{},title =~{::title})}">
+  <title>Lista de Produtos</title>
+</head>
+
+<body>
+<main class="container">
+  </br>
+  <h1>Produtos</h1>
+
+  <div th:if="${successMessage}" class="alert alert-success" role="alert">
+    <span th:text="${successMessage}"></span>
+  </div>
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <span th:text="${errorMessage}"></span>
+  </div>
+
+  <a class="btn btn-primary btn-sm mb-3" th:href="@{/produto/form}">Novo Produto</a>
+  </br>
+
+  <form th:action="@{/produto/list}" method="get" class="mb-3">
+    <div class="input-group">
+      <input type="text" class="form-control" name="filtroDescricao"
+             placeholder="Filtrar por descrição..." th:value="${filtroDescricao}">
+      <button class="btn btn-primary" type="submit">Buscar</button>
+      <a class="btn btn-secondary" th:href="@{/produto/list}">Limpar</a>
+    </div>
+  </form>
+
+  <table class="table table-dark table-hover">
+    <thead class="table-primary">
+    <tr>
+      <th>Id</th>
+      <th>Descrição</th>
+      <th>Valor</th>
+      <th>Editar</th>
+      <th>Excluir</th> </tr>
+    </thead>
+    <tbody>
+    <tr th:each="prod : ${produtos}">
+      <td th:text="${prod.id}"></td>
+      <td th:text="${prod.descricao}"></td>
+      <td th:text="${#numbers.formatDecimal(prod.valor, 1, 'POINT', 2, 'COMMA')}"></td>
+      <td>
+        <a class="btn btn-warning btn-sm" th:href="@{/produto/form/{id}(id=${prod.id})}">Editar</a>
+      </td>
+      <td>
+        <a class="btn btn-danger btn-sm" th:href="@{/produto/delete/{id}(id=${prod.id})}"
+           onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</main>
+
+</body>
+</html>

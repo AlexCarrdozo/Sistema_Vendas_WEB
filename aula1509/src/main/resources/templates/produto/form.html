@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(head = ~{::head}, main = ~{::main})}">
+
+<head th:replace="~{fragments/head :: head(links = ~{},title =~{::title})}">
+  <title>Formulário de Produto</title>
+</head>
+
+<body>
+<main class="container">
+  <h1>Cadastro de Produto</h1>
+
+  <form th:action="@{/produto/save}" th:object="${produto}" method="post">
+    <input type="hidden" th:field="*{id}">
+
+    <div class="mb-3">
+      <label for="descricao" class="form-label">Descrição</label>
+      <input type="text" class="form-control" id="descricao" th:field="*{descricao}" required th:errorclass="is-invalid">
+      <label class="invalid-feedback" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></label>
+    </div>
+
+    <div class="mb-3">
+      <label for="valor" class="form-label">Valor</label>
+      <input type="number" step="0.01" class="form-control" id="valor" th:field="*{valor}" required th:errorclass="is-invalid">
+      <label class="invalid-feedback" th:if="${#fields.hasErrors('valor')}" th:errors="*{valor}"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+  </form>
+</main>
+</body>
+</html>

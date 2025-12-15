@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(head = ~{::head}, main = ~{::main})}">
+
+<head th:replace="~{fragments/head :: head(links = ~{},title =~{::title})}">
+    <title>Vendas por Cliente</title>
+</head>
+
+<body>
+<main class="container">
+    </br>
+    <h1>Vendas por Cliente</h1>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <strong>Informações do Cliente</strong>
+        </div>
+        <div class="card-body">
+            <p><strong>Cliente:</strong>
+                <span th:text="${cliente instanceof T(pweb.aula1509.model.entity.PessoaFisica) ? cliente.nome : cliente.razaoSocial}"></span>
+            </p>
+            <p><strong>Documento:</strong>
+                <span th:text="${cliente instanceof T(pweb.aula1509.model.entity.PessoaFisica) ? cliente.cpf : cliente.cnpj}"></span>
+            </p>
+            <p><strong>E-mail: </strong><span th:text="${cliente.email}"></span></p>
+        </div>
+    </div>
+
+    <form th:action="@{/venda/porCliente/{id}(id=${cliente.id})}" method="get" class="mb-3">
+        <div class="input-group">
+            <input type="date" class="form-control" name="data"
+                   th:value="${dataFiltro != null ? #temporals.format(dataFiltro, 'yyyy-MM-dd') : ''}">
+            <button class="btn btn-primary" type="submit">Filtrar por Data</button>
+            <a class="btn btn-secondary" th:href="@{/venda/porCliente/{id}(id=${cliente.id})}">Limpar</a>
+        </div>
+    </form>
+
+    <table class="table table-dark table-hover">
+        <thead class="table-primary">
+        <tr>
+            <th>Id da Venda</th>
+            <th>Data</th>
+            <th>Total</th>
+            <th>Detalhe</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="v : ${vendas}">
+            <td th:text="${v.id}"></td>
+            <td th:text="${#temporals.format(v.data, 'dd/MM/yyyy')}"></td>
+
+            <td th:text="'R$ ' + ${#numbers.formatDecimal(v.getTotal(), 1, 'POINT', 2, 'COMMA')}"></td>
+
+            <td><a class="btn btn-info btn-sm" th:href="@{/venda/detalhes/{id}(id=${v.id})}">Detalhes</a></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(vendas)}">
+            <td colspan="4" class="text-center">Nenhuma venda encontrada para este cliente.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/cliente/listCliente}" class="btn btn-outline-primary mt-3">Voltar para Clientes</a>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,51 @@
+# --- Arquivos Compilados (.class) ---
+*.class
+
+# --- Pacotes e Executáveis ---
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# --- Logs ---
+*.log
+
+# --- Maven (Se usar Maven) ---
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+
+# --- Gradle (Se usar Gradle) ---
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# --- IntelliJ IDEA (IDE) ---
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# --- Eclipse (IDE) ---
+.classpath
+.project
+.settings/
+bin/
+.metadata/
+
+# --- VS Code (IDE) ---
+.vscode/
+*.code-workspace
+
+# --- Arquivos de Sistema Operacional (Lixo) ---
+.DS_Store
+Thumbs.db

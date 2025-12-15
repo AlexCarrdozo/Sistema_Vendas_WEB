@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(head = ~{::head}, main = ~{::main})}">
+
+<head th:replace="~{fragments/head :: head(links = ~{},title =~{::title})}">
+  <title>Carrinho de Compras</title>
+</head>
+
+<body>
+<main class="container">
+  <br>
+  <h1>Seu Carrinho de Compras</h1>
+
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <span th:text="${errorMessage}"></span>
+  </div>
+
+  <div th:if="${#lists.isEmpty(itens)}" class="alert alert-warning mt-4">
+    <i class="bi bi-cart-x me-2"></i>
+    Seu carrinho está vazio. <a href="/carrinho/loja" class="alert-link">Voltar para a loja</a>.
+  </div>
+
+  <div th:unless="${#lists.isEmpty(itens)}">
+    <table class="table table-dark table-hover mt-4 align-middle shadow-sm rounded">
+      <thead class="table-primary">
+      <tr>
+        <th>Produto</th>
+        <th>Preço Unitário</th>
+        <th class="text-center" style="width: 160px;">Quantidade</th>
+        <th>Total Item</th>
+        <th class="text-end">Ações</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item : ${itens}">
+        <td th:text="${item.produto.descricao}" class="fw-bold"></td>
+
+        <td th:text="'R$ ' + ${#numbers.formatDecimal(item.getValorUnitario(), 1, 'POINT', 2, 'COMMA')}"></td>
+
+        <td>
+          <div class="input-group input-group-sm justify-content-center">
+            <a th:href="@{/carrinho/diminuir/{id}(id=${item.produto.id})}"
+               class="btn btn-outline-light"
+               title="Diminuir quantidade">
+              <i class="bi bi-dash-lg"></i>
+            </a>
+
+            <input type="text"
+                   class="form-control text-center bg-secondary text-white border-secondary fw-bold"
+                   th:value="${item.quantidade}"
+                   readonly
+                   style="max-width: 50px;">
+
+            <a th:href="@{/carrinho/aumentar/{id}(id=${item.produto.id})}"
+               class="btn btn-outline-light"
+               title="Aumentar quantidade">
+              <i class="bi bi-plus-lg"></i>
+            </a>
+          </div>
+        </td>
+
+        <td class="text-success fw-bold"
+            th:text="'R$ ' + ${#numbers.formatDecimal(item.getTotal(), 1, 'POINT', 2, 'COMMA')}"></td>
+
+        <td class="text-end">
+          <a th:href="@{/carrinho/remover/{id}(id=${item.produto.id})}" class="btn btn-danger btn-sm" title="Remover item">
+            <i class="bi bi-trash-fill"></i>
+          </a>
+        </td>
+      </tr>
+      </tbody>
+
+      <tfoot class="table-light text-dark">
+      <tr>
+        <td colspan="3" class="text-end fw-bold text-uppercase align-middle">Total da Compra:</td>
+        <td colspan="2" class="fw-bold fs-4 text-primary"
+            th:text="'R$ ' + ${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}">
+        </td>
+      </tr>
+      </tfoot>
+    </table>
+
+    <div class="card bg-dark text-white border-secondary mt-4 mb-5 shadow-lg">
+      <div class="card-header border-secondary bg-secondary bg-opacity-25">
+        <h5 class="mb-0"><i class="bi bi-check2-circle me-2"></i>Finalizar Compra</h5>
+      </div>
+      <div class="card-body">
+        <form action="/carrinho/finalizar" method="POST">
+          <div class="mb-4">
+            <label for="cliente" class="form-label text-white-50">Selecione o Cliente:</label>
+            <div class="input-group">
+              <span class="input-group-text bg-secondary border-secondary text-white"><i class="bi bi-person-fill"></i></span>
+              <select class="form-select bg-dark text-white border-secondary" name="clienteId" id="cliente" required>
+                <option value="" disabled selected>-- Escolha um cliente --</option>
+                <option th:each="c : ${clientes}"
+                        th:value="${c.id}"
+                        th:text="${c instanceof T(pweb.aula1509.model.entity.PessoaFisica) ? c.nome + ' (CPF: ' + c.cpf + ')' : c.razaoSocial + ' (CNPJ: ' + c.cnpj + ')'}">
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="/carrinho/loja" class="btn btn-outline-light px-4">
+              <i class="bi bi-arrow-left me-2"></i>Continuar Comprando
+            </a>
+            <button type="submit" class="btn btn-success btn-lg px-5 fw-bold shadow">
+              Finalizar Venda <i class="bi bi-check-lg ms-2"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

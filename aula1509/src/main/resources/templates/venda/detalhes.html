@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(head = ~{::head}, main = ~{::main})}" xmlns="http://www.w3.org/1999/html">
+
+<head th:replace="~{fragments/head :: head(links = ~{},title =~{::title})}">
+    <title>Detalhes da Venda</title>
+</head>
+
+<body>
+
+<main class="container">
+    <h1>Detalhes da Venda</h1>
+
+    <div class="card">
+        <h5><div class="card-header">
+            <strong>
+            Informações Principais
+            </strong>
+        </div></h5>
+        <div class="card-body">
+            <p><strong>ID da Venda:</strong> <span th:text="${venda.id}"></span></p>
+            <p><strong>Data:</strong> <span th:text="${venda.data}"></span></p>
+            <p><strong>Cliente:</strong>
+                <span th:text="${venda.pessoa instanceof T(pweb.aula1509.model.entity.PessoaFisica) ? venda.pessoa.nome : venda.pessoa.razaoSocial}"></span>
+            </p>
+            <p><strong>E-mail: </strong><span th:text="${venda.pessoa.email}"></span></p>
+            <p><strong>Telefone: </strong><span th:text="${venda.pessoa.telefone}"></span></p>
+            <p><strong>Documento:</strong>
+                <span th:text="${venda.pessoa instanceof T(pweb.aula1509.model.entity.PessoaFisica) ? venda.pessoa.cpf : venda.pessoa.cnpj}"></span>
+            </p>
+            <p><strong>Total Geral:</strong> <span th:text="${#numbers.formatDecimal(venda.getTotal(), 1, 'POINT', 2, 'COMMA')}"></span></p>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2>Itens da Venda</h2>
+
+    <table class="table table-dark table-hover" border="2">
+        <thead class="table-primary">
+        <tr>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Valor Unitário</th>
+            <th>Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${venda.itens}">
+            <td th:text="${item.produto.descricao}"></td>
+            <td th:text="${item.quantidade}"></td>
+            <td th:text="${#numbers.formatDecimal(item.produto.valor, 1, 'POINT', 2, 'COMMA')}"></td>
+            <td th:text="${#numbers.formatDecimal(item.getTotal(), 1, 'POINT', 2, 'COMMA')}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(head = ~{::head}, main = ~{::main})}">
+
+<head th:replace="~{fragments/head :: head(links = ~{},title =~{::title})}">
+    <title>Loja de Produtos</title>
+</head>
+
+<body>
+<main class="container">
+    <br>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Produtos Disponíveis</h1>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="produto : ${produtos}">
+            <div class="card h-100 bg-dark text-white border-primary">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${produto.descricao}">Nome do Produto</h5>
+
+                    <p class="card-text display-6"
+                       th:text="'R$ ' + ${#numbers.formatDecimal(produto.valor, 1, 'POINT', 2, 'COMMA')}">
+                        R$ 0,00
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent border-primary">
+                    <a th:href="@{/carrinho/adicionar/{id}(id=${produto.id})}" class="btn btn-success w-100">
+                        Adicionar ao Carrinho
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(produtos)}" class="alert alert-info mt-3">
+        Nenhum produto cadastrado no sistema.
+    </div>
+
+</main>
+</body>
+</html>
