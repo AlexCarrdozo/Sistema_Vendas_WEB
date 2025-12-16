@@ -74,13 +74,6 @@ public class CarrinhoController {
         return "redirect:/carrinho/listar";
     }
 
-    @PostMapping("/atualizar/{id}")
-    public String atualizar(@PathVariable("id") Long id, @RequestParam("quantidade") Double quantidade, HttpSession session) {
-        Venda venda = obterVendaDaSessao(session);
-        venda.alterarQuantidade(id, quantidade);
-        return "redirect:/carrinho/listar";
-    }
-
     /**
      * Finaliza a venda: Pega da sessão -> Salva no Banco -> Limpa a sessão
      */
