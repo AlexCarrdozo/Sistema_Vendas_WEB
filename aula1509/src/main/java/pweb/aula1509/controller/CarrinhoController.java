@@ -74,35 +74,51 @@ public class CarrinhoController {
         return "redirect:/carrinho/listar";
     }
 
+    @PostMapping("/atualizar/{id}")
+    public String atualizar(@PathVariable("id") Long id, @RequestParam("quantidade") Double quantidade, HttpSession session) {
+        Venda venda = obterVendaDaSessao(session);
+        venda.alterarQuantidade(id, quantidade);
+        return "redirect:/carrinho/listar";
+    }
+
     /**
      * Finaliza a venda: Pega da sessão -> Salva no Banco -> Limpa a sessão
      */
     @PostMapping("/finalizar")
-    public String finalizar(@RequestParam("clienteId") Long clienteId, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String finalizar(
+            @RequestParam(name = "clienteId", required = false) Long clienteId, // 1. Deixamos required=false para validar manualmente
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
         Venda venda = obterVendaDaSessao(session);
 
-        if (venda.getItens().isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "O carrinho está vazio.");
+
+        // Cliente não selecionado
+        if (clienteId == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Por favor, selecione um cliente para finalizar a compra.");
             return "redirect:/carrinho/listar";
         }
 
+        // Cliente não existe no banco
         Pessoa cliente = pessoaRepository.findById(clienteId).orElse(null);
         if (cliente == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Selecione um cliente válido.");
+            redirectAttributes.addFlashAttribute("errorMessage", "O cliente selecionado não foi encontrado no banco de dados.");
             return "redirect:/carrinho/listar";
         }
 
-        // Finaliza os dados da venda
+        // Se passou por tudo, finaliza a venda
         venda.setData(LocalDate.now());
         venda.setPessoa(cliente);
 
-        // Salva no banco (O CascadeType.ALL na entidade Venda salvará os itens automaticamente)
+        // Salva no banco
         vendaRepository.save(venda);
 
-        // Remove a venda da sessão para iniciar uma nova compra limpa
+        // Limpa a sessão
         session.removeAttribute("vendaSession");
 
-        return "redirect:/venda/list";
+        redirectAttributes.addFlashAttribute("successMessage", "Venda realizada com sucesso!");
+
+        return "redirect:/venda/list"; // Ou redireciona para uma página de detalhes da venda
     }
 
     /**

@@ -20,6 +20,18 @@ public class Produto implements Serializable {
     @DecimalMin(value="1.0")
     private BigDecimal valor;
 
+    @NotBlank
+    @Column(length = 2048) // Aumenta o tamanho pois urls podem ser longas
+    private String urlImagem;
+
+    public String getUrlImagem() {
+        return urlImagem;
+    }
+
+    public void setUrlImagem(String urlImagem) {
+        this.urlImagem = urlImagem;
+    }
+
     public Long getId() {
         return id;
     }

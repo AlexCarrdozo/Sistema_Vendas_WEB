@@ -3,10 +3,10 @@ INSERT INTO tb_pessoa (tipo, email, telefone, nome, cpf) VALUES ('F', 'ana.souza
 INSERT INTO tb_pessoa (tipo, email, telefone, razao_social, cnpj) VALUES ('J', 'compras@techcorp.com', '(62)3333-4444', 'TechCorp Soluções S.A.', '11.222.333/0001-55');
 
 -- 2. Inserir os produtos
-INSERT INTO produto (descricao, valor) VALUES ('Notebook Gamer', 7500.00);
-INSERT INTO produto (descricao, valor) VALUES ('Mouse sem fio', 150.00);
-INSERT INTO produto (descricao, valor) VALUES ( 'Celular', 3500.00);
-INSERT INTO produto (descricao, valor) VALUES ( 'Mouse-Pad', 50.00);
+INSERT INTO produto (descricao, valor, url_imagem) VALUES ('Notebook Gamer', 7500.00, 'https://www.notebookcheck.net/fileadmin/Notebooks/News/_nc3/Dell_G15_family_photo_2.jpg');
+INSERT INTO produto (descricao, valor, url_imagem) VALUES ('Mouse sem fio', 150.00, 'https://images7.kabum.com.br/produtos/fotos/104587/mouse-logitech-mx-master-3-sem-fio-recarregavel-tecnologia-flow-unifying-4000dpi-910-005647_1613400718_gg.jpg');
+INSERT INTO produto (descricao, valor, url_imagem) VALUES ( 'Celular', 3500.00, 'https://cdn.mos.cms.futurecdn.net/vBYZnyCh4VTtxmsfz2C9BA-1200-80.jpg');
+INSERT INTO produto (descricao, valor, url_imagem) VALUES ( 'Mouse-Pad', 50.00, 'https://images.fravega.com/f1000/429986f40a3b8d3cc52717515b07af78.jpg');
 
 -- 3. Inserir as vendas
 -- Venda 1 para Ana Souza
