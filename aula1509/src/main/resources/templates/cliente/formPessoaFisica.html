@@ -19,7 +19,7 @@
 
         <div class="mb-3">
             <label for="nome" class="form-label">Nome:</label>
-            <input type="text" class="form-control" id="nome" th:field="*{nome}" required th:errorclass="is-invalid">
+            <input type="text" class="form-control" id="nome" th:field="*{nome}" th:errorclass="is-invalid">
             <label class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></label>
         </div>
         <div class="mb-3">
@@ -34,7 +34,7 @@
         </div>
         <div class="mb-3">
             <label for="cpf" class="form-label">CPF:</label>
-            <input type="text" class="form-control" id="cpf" th:field="*{cpf}" required th:errorclass="is-invalid">
+            <input type="text" class="form-control" id="cpf" th:field="*{cpf}" th:errorclass="is-invalid">
             <label class="invalid-feedback" th:if="${#fields.hasErrors('cpf')}" th:errors="*{cpf}"></label>
         </div>
 

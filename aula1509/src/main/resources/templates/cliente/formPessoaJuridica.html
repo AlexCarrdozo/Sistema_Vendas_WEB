@@ -19,22 +19,22 @@
 
         <div class="mb-3">
             <label for="razaoSocial" class="form-label">Razão Social:</label>
-            <input type="text" class="form-control" id="razaoSocial" th:field="*{razaoSocial}" required th:errorclass="is-invalid">
+            <input type="text" class="form-control" id="razaoSocial" th:field="*{razaoSocial}" th:errorclass="is-invalid">
             <label class="invalid-feedback" th:if="${#fields.hasErrors('razaoSocial')}" th:errors="*{razaoSocial}"></label>
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">E-mail:</label>
-            <input type="email" class="form-control" id="email" th:field="*{email}" required th:errorclass="is-invalid">
+            <input type="email" class="form-control" id="email" th:field="*{email}" th:errorclass="is-invalid">
             <label class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></label>
         </div>
         <div class="mb-3">
             <label for="telefone" class="form-label">Telefone:</label>
-            <input type="text" class="form-control" id="telefone" th:field="*{telefone}" required th:errorclass="is-invalid">
+            <input type="text" class="form-control" id="telefone" th:field="*{telefone}" th:errorclass="is-invalid">
             <label class="invalid-feedback" th:if="${#fields.hasErrors('telefone')}" th:errors="*{telefone}"></label>
         </div>
         <div class="mb-3">
             <label for="cnpj" class="form-label">CNPJ:</label>
-            <input type="text" class="form-control" id="cnpj" th:field="*{cnpj}" required th:errorclass="is-invalid">
+            <input type="text" class="form-control" id="cnpj" th:field="*{cnpj}" th:errorclass="is-invalid">
             <label class="invalid-feedback" th:if="${#fields.hasErrors('cnpj')}" th:errors="*{cnpj}"></label>
         </div>
 

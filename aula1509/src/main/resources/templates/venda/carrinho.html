@@ -26,6 +26,7 @@
     <table class="table table-dark table-hover mt-4 align-middle shadow-sm rounded">
       <thead class="table-primary">
       <tr>
+        <th style="width: 80px;">Imagem</th>
         <th>Produto</th>
         <th>Preço Unitário</th>
         <th class="text-center" style="width: 160px;">Quantidade</th>
@@ -35,10 +36,14 @@
       </thead>
       <tbody>
       <tr th:each="item : ${itens}">
+        <td>
+          <img th:src="${item.produto.urlImagem != null && !item.produto.urlImagem.isEmpty() ? item.produto.urlImagem : 'https://placehold.co/100x100?text=Indisponivel'}"
+               class="img-thumbnail bg-secondary border-0"
+               alt="Imagem do produto"
+               style="width: 60px; height: 60px; object-fit: cover;">
+        </td>
         <td th:text="${item.produto.descricao}" class="fw-bold"></td>
-
         <td th:text="'R$ ' + ${#numbers.formatDecimal(item.getValorUnitario(), 1, 'POINT', 2, 'COMMA')}"></td>
-
         <td>
           <div class="input-group input-group-sm justify-content-center">
             <a th:href="@{/carrinho/diminuir/{id}(id=${item.produto.id})}"
@@ -92,7 +97,7 @@
             <label for="cliente" class="form-label text-white-50">Selecione o Cliente:</label>
             <div class="input-group">
               <span class="input-group-text bg-secondary border-secondary text-white"><i class="bi bi-person-fill"></i></span>
-              <select class="form-select bg-dark text-white border-secondary" name="clienteId" id="cliente" required>
+              <select class="form-select bg-dark text-white border-secondary" name="clienteId" id="cliente">
                 <option value="" disabled selected>-- Escolha um cliente --</option>
                 <option th:each="c : ${clientes}"
                         th:value="${c.id}"
