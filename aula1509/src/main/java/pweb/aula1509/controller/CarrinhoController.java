@@ -118,7 +118,7 @@ public class CarrinhoController {
 
         redirectAttributes.addFlashAttribute("successMessage", "Venda realizada com sucesso!");
 
-        return "redirect:/venda/list"; // Ou redireciona para uma página de detalhes da venda
+        return "redirect:/carrinho/loja"; // Ou redireciona para uma página de detalhes da venda
     }
 
     /**
