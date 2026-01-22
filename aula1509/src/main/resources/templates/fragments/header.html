@@ -1,4 +1,4 @@
-<header th:fragment="header">
+<header th:fragment="header" xmlns:sec="http://www.w3.org/1999/xhtml">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
         <div class="container">
 
@@ -24,27 +24,33 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN')">
                         <a class="nav-link" th:href="@{/cliente/listCliente}">
                             <i class="bi bi-people me-1"></i> Clientes
                         </a>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN')">
                         <a class="nav-link" th:href="@{/produto/list}">
                             <i class="bi bi-box-seam me-1"></i> Produtos
                         </a>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN')">
                         <a class="nav-link" th:href="@{/venda/list}">
                             <i class="bi bi-receipt me-1"></i> Vendas
                         </a>
                     </li>
+
                 </ul>
 
                 <!-- Área da Direita (Carrinho) -->
                 <div class="d-flex align-items-center">
+                    <div class="text-end me-3 d-none d-lg-block text-white">
+                        <span class="d-block small text-white-50" style="line-height: 1;">Olá,</span>
+                        <strong class="text-primary" style="line-height: 1;" sec:authentication="name"></strong>
+                    </div>
+
                     <a th:href="@{/carrinho/listar}" class="btn btn-outline-light position-relative rounded-pill px-3">
                         <i class="bi bi-cart3 me-1"></i> Carrinho
 

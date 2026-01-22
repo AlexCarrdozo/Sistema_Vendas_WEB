@@ -92,7 +92,7 @@
         <h5 class="mb-0"><i class="bi bi-check2-circle me-2"></i>Finalizar Compra</h5>
       </div>
       <div class="card-body">
-        <form action="/carrinho/finalizar" method="POST">
+        <form th:action="@{/carrinho/finalizar}" method="post">
           <div class="mb-4">
             <label for="cliente" class="form-label text-white-50">Selecione o Cliente:</label>
             <div class="input-group">
