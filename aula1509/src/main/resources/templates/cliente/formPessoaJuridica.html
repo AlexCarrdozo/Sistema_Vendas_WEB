@@ -9,9 +9,9 @@
 
 <body>
 <main class="container">
-    </br>
+    <br>
     <h1>Cadastro de Cliente Jurídico</h1>
-    </br>
+    <br>
 
     <form th:action="@{/cliente/saveJuridico}" th:object="${pessoaJuridica}" method="POST">
 
@@ -22,24 +22,43 @@
             <input type="text" class="form-control" id="razaoSocial" th:field="*{razaoSocial}" th:errorclass="is-invalid">
             <label class="invalid-feedback" th:if="${#fields.hasErrors('razaoSocial')}" th:errors="*{razaoSocial}"></label>
         </div>
+
         <div class="mb-3">
             <label for="email" class="form-label">E-mail:</label>
             <input type="email" class="form-control" id="email" th:field="*{email}" th:errorclass="is-invalid">
             <label class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></label>
         </div>
+
         <div class="mb-3">
             <label for="telefone" class="form-label">Telefone:</label>
             <input type="text" class="form-control" id="telefone" th:field="*{telefone}" th:errorclass="is-invalid">
             <label class="invalid-feedback" th:if="${#fields.hasErrors('telefone')}" th:errors="*{telefone}"></label>
         </div>
+
         <div class="mb-3">
             <label for="cnpj" class="form-label">CNPJ:</label>
             <input type="text" class="form-control" id="cnpj" th:field="*{cnpj}" th:errorclass="is-invalid">
             <label class="invalid-feedback" th:if="${#fields.hasErrors('cnpj')}" th:errors="*{cnpj}"></label>
         </div>
 
-        <button type="submit" class="btn btn-primary">Salvar</button>
-        <a th:href="@{/cliente/listCliente}" class="btn btn-secondary">Cancelar</a>
+        <hr class="my-4">
+        <h5 class="mb-3 text-secondary">Dados de Acesso</h5>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="login" class="form-label">Usuário (Login):</label>
+                <input type="text" class="form-control" id="login" th:field="*{usuario.login}" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="senha" class="form-label">Senha:</label>
+                <input type="password" class="form-control" id="senha" th:field="*{usuario.password}" required>
+            </div>
+        </div>
+        <div class="d-grid gap-2 d-md-block mt-4">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a th:href="@{/login}" class="btn btn-secondary">Cancelar</a>
+        </div>
     </form>
 </main>
 </body>

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface VendaRepository extends JpaRepository<Venda, Long> {
+    List<Venda> findByPessoa_Usuario_Login(String login);
 
     @Query("FROM Venda v WHERE :data IS NULL OR v.data = :data")
     List<Venda> vendas(@Param("data") LocalDate data);

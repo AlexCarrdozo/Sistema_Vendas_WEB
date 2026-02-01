@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{fragments/layout :: layout(head = ~{::head}, main = ~{::main})}">
+      th:replace="~{fragments/layout :: layout(head = ~{::head}, main = ~{::main})}"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head th:replace="~{fragments/head :: head(links = ~{},title =~{::title})}">
   <title>Carrinho de Compras</title>
@@ -92,30 +93,20 @@
         <h5 class="mb-0"><i class="bi bi-check2-circle me-2"></i>Finalizar Compra</h5>
       </div>
       <div class="card-body">
+
         <form th:action="@{/carrinho/finalizar}" method="post">
-          <div class="mb-4">
-            <label for="cliente" class="form-label text-white-50">Selecione o Cliente:</label>
-            <div class="input-group">
-              <span class="input-group-text bg-secondary border-secondary text-white"><i class="bi bi-person-fill"></i></span>
-              <select class="form-select bg-dark text-white border-secondary" name="clienteId" id="cliente">
-                <option value="" disabled selected>-- Escolha um cliente --</option>
-                <option th:each="c : ${clientes}"
-                        th:value="${c.id}"
-                        th:text="${c instanceof T(pweb.aula1509.model.entity.PessoaFisica) ? c.nome + ' (CPF: ' + c.cpf + ')' : c.razaoSocial + ' (CNPJ: ' + c.cnpj + ')'}">
-                </option>
-              </select>
-            </div>
-          </div>
 
           <div class="d-flex justify-content-between align-items-center">
             <a href="/carrinho/loja" class="btn btn-outline-light px-4">
               <i class="bi bi-arrow-left me-2"></i>Continuar Comprando
             </a>
+
             <button type="submit" class="btn btn-success btn-lg px-5 fw-bold shadow">
-              Finalizar Venda <i class="bi bi-check-lg ms-2"></i>
+              Finalizar Compra <i class="bi bi-check-lg ms-2"></i>
             </button>
           </div>
         </form>
+
       </div>
     </div>
   </div>

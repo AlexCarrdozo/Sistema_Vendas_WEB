@@ -9,11 +9,11 @@ import org.hibernate.validator.constraints.br.CPF;
 @DiscriminatorValue("F")
 public class PessoaFisica extends Pessoa{
 
-    @NotBlank
+    @NotBlank(message = "O nome é obrigatório")
     private String nome;
 
-    @NotBlank
-    @CPF
+    @NotBlank(message = "O CPF é obrigatório")
+    @CPF(message = "CPF inválido")
     private String cpf;
 
     public String getNome() {
