@@ -23,6 +23,18 @@ public abstract class Pessoa {
     @NotBlank
     private String telefone;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario = new Usuario();
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
     public List<Venda> getVendas() {
         return vendas;
     }

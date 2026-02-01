@@ -1,6 +1,8 @@
 package pweb.aula1509.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import pweb.aula1509.model.entity.Pessoa;
+import pweb.aula1509.model.entity.Venda;
 import pweb.aula1509.model.repository.PessoaRepository;
 import pweb.aula1509.model.repository.VendaRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping("/venda")
@@ -59,5 +63,27 @@ public class VendaController {
         }
 
         return new ModelAndView("venda/listPorCliente", model);
+    }
+
+    @GetMapping("/minhasCompras")
+    public ModelAndView minhasCompras() {
+        // 1. Pega o login do usuário autenticado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // Se não estiver logado, manda pro login
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return new ModelAndView("redirect:/login");
+        }
+
+        String login = auth.getName();
+
+        // 2. Busca as vendas desse usuário
+        List<Venda> vendas = repository.findByPessoa_Usuario_Login(login);
+
+        // 3. Retorna para a view
+        ModelMap model = new ModelMap();
+        model.addAttribute("vendas", vendas);
+
+        return new ModelAndView("/venda/minhasCompras", model);
     }
 }

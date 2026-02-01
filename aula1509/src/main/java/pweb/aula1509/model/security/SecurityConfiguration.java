@@ -1,75 +1,68 @@
 package pweb.aula1509.model.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@Configuration //classe de configuração
-@EnableWebSecurity //indica ao Spring que serão definidas configurações personalizadas de segurança
+@Configuration
+@EnableWebSecurity
 public class SecurityConfiguration {
+
+    // 1. Injeção da sua classe de configuração de usuário (Banco de Dados)
+    @Autowired
+    UsuarioDetailsConfig usuarioDetailsConfig;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(
                         customizer ->
                                 customizer
+                                        .requestMatchers("/h2-console/**").permitAll()
                                         .requestMatchers("/carrinho/loja").permitAll()
-                                        .requestMatchers("/cliente/**").hasAnyRole("ADMIN")
+                                        .requestMatchers("/cliente/formFisico", "/cliente/formJuridico").permitAll()
+                                        .requestMatchers("/cliente/saveFisico", "/cliente/saveJuridico").permitAll()
                                         .requestMatchers("/produto/**").hasAnyRole("ADMIN")
+                                        .requestMatchers("/venda/minhasCompras").permitAll()
                                         .requestMatchers("/venda/**").hasAnyRole("ADMIN")
+                                        .requestMatchers("/cliente/**").hasAnyRole("ADMIN")
                                         .requestMatchers(HttpMethod.POST,"/pessoafisica/save").permitAll()
-                                        .requestMatchers("/carrinho/finalizar").hasAnyRole("ADMIN")
-                                        .anyRequest() //define que a configuração é válida para qualquer requisição.
-                                        .authenticated() //define que o usuário precisa estar autenticado.
+                                        .anyRequest()
+                                        .authenticated()
                 )
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .formLogin(customizer ->
                         customizer
-                                .loginPage("/login") //passamos como parâmetro a URL para acesso à página de login que criamos
-                                .defaultSuccessUrl("/", true)
-                                .permitAll() //define que essa página pode ser acessada por todos, independentemente do usuário estar autenticado ou não.
+                                .loginPage("/login")
+                                .defaultSuccessUrl("/carrinho/loja", true)
+                                .permitAll()
                 )
-                .httpBasic(withDefaults()) //configura a autenticação básica (usuário e senha)
-                .logout(LogoutConfigurer::permitAll) //configura a funcionalidade de logout no Spring Security.
-                .rememberMe(withDefaults()); //permite que os usuários permaneçam autenticados mesmo após o fechamento do navegador
+                .httpBasic(withDefaults())
+                .logout(LogoutConfigurer::permitAll)
+                .rememberMe(withDefaults());
         return http.build();
     }
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user1 = User.withUsername("user")
-                .password(passwordEncoder().encode("123"))
-                .roles("USER")
-                .build();
-        UserDetails admin = User.withUsername("admin")
-                .password(passwordEncoder().encode("1"))
-                .roles("ADMIN")
-                .build();
-        UserDetails alex = User.withUsername("Alex")
-                .password(passwordEncoder().encode("12"))
-                .roles("ALEX")
-                .build();
-        return new InMemoryUserDetailsManager(user1, admin, alex);
+    // 3. Método para configurar o AuthenticationManagerBuilder com sua classe personalizada
+    @Autowired
+    public void configureUserDetails(final AuthenticationManagerBuilder builder) throws Exception {
+        builder.userDetailsService(usuarioDetailsConfig).passwordEncoder(new BCryptPasswordEncoder());
     }
 
-    /**
-     * Com o método, instanciamos uma instância do encoder BCrypt e deixando o controle dessa instância como responsabilidade do Spring.
-     * Agora, sempre que o Spring Security necessitar condificar um senha, ele já terá o que precisa configurado.
-     * @return
-     */
+    // 4. O InMemoryUserDetailsManager foi removido pois agora usamos o método acima.
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

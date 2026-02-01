@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(head = ~{::head}, main = ~{::main})}">
+
+<head th:replace="~{fragments/head :: head(links = ~{}, title =~{::title})}">
+    <title>Minhas Compras</title>
+</head>
+
+<body>
+<main class="container">
+    <br>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-bag-check-fill me-2"></i>Meus Pedidos</h1>
+        <a href="/carrinho/loja" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> Voltar à Loja
+        </a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(vendas)}" class="alert alert-info text-center py-5">
+        <i class="bi bi-cart-x fs-1 d-block mb-3"></i>
+        <h4>Você ainda não realizou nenhuma compra.</h4>
+        <p>Que tal aproveitar nossas ofertas?</p>
+        <a href="/carrinho/loja" class="btn btn-primary mt-2">Ir às Compras</a>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(vendas)}" class="accordion shadow-sm" id="accordionVendas">
+
+        <div class="accordion-item" th:each="venda, status : ${vendas}">
+            <h2 class="accordion-header" th:id="'heading' + ${venda.id}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        th:data-bs-target="'#collapse' + ${venda.id}" aria-expanded="false"
+                        th:aria-controls="'collapse' + ${venda.id}">
+
+                    <div class="d-flex w-100 justify-content-between align-items-center me-3">
+                        <div>
+                            <strong>Pedido #<span th:text="${venda.id}"></span></strong>
+                            <span class="text-muted ms-2"
+                                  th:text="'Realizado em: ' + ${#temporals.format(venda.data, 'dd/MM/yyyy')}">
+                            </span>
+                        </div>
+                        <span class="badge bg-success rounded-pill"
+                              th:text="'Total: R$ ' + ${#numbers.formatDecimal(venda.total, 1, 'POINT', 2, 'COMMA')}">
+                        </span>
+                    </div>
+
+                </button>
+            </h2>
+            <div th:id="'collapse' + ${venda.id}" class="accordion-collapse collapse"
+                 th:aria-labelledby="'heading' + ${venda.id}" data-bs-parent="#accordionVendas">
+                <div class="accordion-body bg-light">
+
+                    <table class="table table-sm table-borderless">
+                        <thead class="text-secondary border-bottom">
+                        <tr>
+                            <th>Produto</th>
+                            <th class="text-center">Qtd</th>
+                            <th class="text-end">Valor Unit.</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${venda.itens}">
+                            <td th:text="${item.produto.descricao}"></td>
+                            <td class="text-center" th:text="${item.quantidade}"></td>
+                            <td class="text-end" th:text="'R$ ' + ${#numbers.formatDecimal(item.valorUnitario, 1, 'POINT', 2, 'COMMA')}"></td>
+                            <td class="text-end fw-bold" th:text="'R$ ' + ${#numbers.formatDecimal(item.total, 1, 'POINT', 2, 'COMMA')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+</body>
+</html>

@@ -9,10 +9,10 @@ import org.hibernate.validator.constraints.br.CNPJ;
 @DiscriminatorValue("J")
 public class PessoaJuridica extends Pessoa {
 
-    @NotBlank
-    @CNPJ
+    @NotBlank(message = "O CNPJ é obrigatório")
+    @CNPJ(message = "CNPJ inválido")
     private String cnpj;
-    @NotBlank
+    @NotBlank(message = "A razão social é obrigatória")
     private String razaoSocial;
 
     public String getCnpj() {

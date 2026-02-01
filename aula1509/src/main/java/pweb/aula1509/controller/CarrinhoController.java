@@ -2,15 +2,14 @@ package pweb.aula1509.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import pweb.aula1509.model.entity.ItemVenda;
-import pweb.aula1509.model.entity.Pessoa;
-import pweb.aula1509.model.entity.Produto;
-import pweb.aula1509.model.entity.Venda;
+import pweb.aula1509.model.entity.*;
 import pweb.aula1509.model.repository.PessoaRepository;
 import pweb.aula1509.model.repository.ProdutoRepository;
 import pweb.aula1509.model.repository.VendaRepository;
@@ -85,40 +84,51 @@ public class CarrinhoController {
      * Finaliza a venda: Pega da sessão -> Salva no Banco -> Limpa a sessão
      */
     @PostMapping("/finalizar")
-    public String finalizar(
-            @RequestParam(name = "clienteId", required = false) Long clienteId, // 1. Deixamos required=false para validar manualmente
-            HttpSession session,
-            RedirectAttributes redirectAttributes) {
+    public String finalizar(HttpSession session, RedirectAttributes redirectAttributes) {
 
         Venda venda = obterVendaDaSessao(session);
 
+        // 1. Pergunta ao Spring Security quem está logado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Cliente não selecionado
-        if (clienteId == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Por favor, selecione um cliente para finalizar a compra.");
-            return "redirect:/carrinho/listar";
+        // Verifica se é um usuário anônimo (não logado)
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Você precisa estar logado para finalizar uma compra.");
+            return "redirect:/login";
         }
 
-        // Cliente não existe no banco
-        Pessoa cliente = pessoaRepository.findById(clienteId).orElse(null);
+        // 2. Pega o login (ex: "admin", "Alex")
+        String login = auth.getName();
+
+        // 3. Busca a pessoa no banco usando o login
+        Pessoa cliente = pessoaRepository.findByUsuarioLogin(login);
+
+        // 4. Valida se encontrou a pessoa
         if (cliente == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "O cliente selecionado não foi encontrado no banco de dados.");
-            return "redirect:/carrinho/listar";
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro: O usuário logado (" + login + ") não tem um cadastro de Pessoa associado.");
+            return "redirect:/venda/minhasCompras";
         }
 
-        // Se passou por tudo, finaliza a venda
+        // 5. Configura a venda
         venda.setData(LocalDate.now());
         venda.setPessoa(cliente);
 
-        // Salva no banco
+        // 6. Amarra os itens à venda (para evitar erro de chave estrangeira)
+        if (venda.getItens() != null) {
+            for (ItemVenda item : venda.getItens()) {
+                item.setVenda(venda);
+            }
+        }
+
+        // 7. Salva tudo
         vendaRepository.save(venda);
 
-        // Limpa a sessão
+        // 8. Limpa o carrinho da sessão
         session.removeAttribute("vendaSession");
 
         redirectAttributes.addFlashAttribute("successMessage", "Venda realizada com sucesso!");
 
-        return "redirect:/carrinho/loja"; // Ou redireciona para uma página de detalhes da venda
+        return "redirect:/venda/minhasCompras";
     }
 
     /**
