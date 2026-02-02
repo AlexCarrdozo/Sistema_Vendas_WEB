@@ -41,7 +41,6 @@ public class CarrinhoController {
 
         model.addAttribute("itens", venda.getItens());
         model.addAttribute("total", venda.getTotal());
-        model.addAttribute("clientes", pessoaRepository.findAll()); // Para o select de clientes na finalização
 
         return new ModelAndView("/venda/carrinho", model);
     }

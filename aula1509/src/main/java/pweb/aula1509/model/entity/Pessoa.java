@@ -1,6 +1,7 @@
 package pweb.aula1509.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -25,6 +26,7 @@ public abstract class Pessoa {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
+    @Valid
     private Usuario usuario = new Usuario();
 
     public Usuario getUsuario() {

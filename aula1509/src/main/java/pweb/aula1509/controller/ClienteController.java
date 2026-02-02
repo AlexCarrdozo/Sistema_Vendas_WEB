@@ -2,6 +2,7 @@ package pweb.aula1509.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,7 +35,7 @@ public class ClienteController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/listCliente")
+    @GetMapping("/listClientes")
     public ModelAndView listarClientes(
             @RequestParam(name = "filtroNome", required = false) String filtroNome,
             ModelMap model) {
@@ -51,7 +52,7 @@ public class ClienteController {
         return new ModelAndView("/cliente/listClientes", model);
     }
 
-    @GetMapping("/formFisico")
+    @GetMapping(value = {"/formFisico", "/formFisico/{id}"})
     public ModelAndView formPessoaFisica(
             @PathVariable(name = "id", required = false) Optional<Long> id,
             ModelMap model) {
@@ -69,7 +70,7 @@ public class ClienteController {
     }
 
     @PostMapping("/saveFisico")
-    public String savePessoaFisica(@Valid PessoaFisica pessoaFisica, BindingResult result) {
+    public String savePessoaFisica(@Valid PessoaFisica pessoaFisica, BindingResult result, Authentication authentication) {
 
         if (result.hasErrors()) {
             result.getAllErrors().forEach(error -> {
@@ -78,16 +79,35 @@ public class ClienteController {
             });
             return "/cliente/formPessoaFisica";
         }
+
         pessoaFisica.getUsuario().setPassword(
                 passwordEncoder.encode(pessoaFisica.getUsuario().getPassword())
         );
 
         pessoaFisicaRepository.save(pessoaFisica);
 
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/cliente/listClientes";
+        }
+
         return "redirect:/login";
     }
 
-    @GetMapping("/formJuridico")
+    @GetMapping("/deleteFisico/{id}")
+    public String deletePessoaFisica(
+            @PathVariable("id") Long id,
+            RedirectAttributes redirectAttributes) {
+
+        if (vendaRepository.vendasPorCliente(id, null).isEmpty()) {
+            pessoaFisicaRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Cliente excluído com sucesso!");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Não é possível excluir: Este cliente possui vendas associadas.");
+        }
+        return "redirect:/cliente/listClientes";
+    }
+
+    @GetMapping(value = {"/formJuridico", "/formJuridico/{id}"})
     public ModelAndView formPessoaJuridica(
             @PathVariable(name = "id", required = false) Optional<Long> id,
             ModelMap model) {
@@ -105,17 +125,22 @@ public class ClienteController {
     }
 
     @PostMapping("/saveJuridico")
-    public String savePessoaJuridica(@Valid PessoaJuridica pessoaJuridica , BindingResult result) {
+    public String savePessoaJuridica(@Valid PessoaJuridica pessoaJuridica, BindingResult result, Authentication authentication) {
+
         if (result.hasErrors()) {
             return "/cliente/formPessoaJuridica";
         }
 
-        // 3. Criptografar a senha antes de salvar
         String senhaPura = pessoaJuridica.getUsuario().getPassword();
         String senhaCriptografada = passwordEncoder.encode(senhaPura);
         pessoaJuridica.getUsuario().setPassword(senhaCriptografada);
 
         pessoaJuridicaRepository.save(pessoaJuridica);
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            return "redirect:/cliente/listClientes";
+        }
+
         return "redirect:/login";
     }
 
@@ -130,6 +155,6 @@ public class ClienteController {
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Não é possível excluir: Este cliente possui vendas associadas.");
         }
-        return "redirect:/cliente/listCliente";
+        return "redirect:/cliente/listClientes";
     }
 }
