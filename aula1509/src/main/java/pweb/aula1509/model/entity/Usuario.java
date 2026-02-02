@@ -1,6 +1,8 @@
 package pweb.aula1509.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serializable;
@@ -15,8 +17,10 @@ public class Usuario implements Serializable, UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "É obrigatório o nome de usuário!")
     private String login;
 
+    @NotBlank(message = "É obrigatório o campo de senha!")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)

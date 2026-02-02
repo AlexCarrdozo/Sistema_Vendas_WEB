@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{fragments/layout :: layout(head = ~{::head}, main = ~{::main})}">
 
 <head th:replace="~{fragments/head :: head(links = ~{},title =~{::title})}">
@@ -47,17 +48,22 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="login" class="form-label">Usuário (Login):</label>
-                <input type="text" class="form-control" id="login" th:field="*{usuario.login}" required>
+                <input type="text" class="form-control" id="login" th:field="*{usuario.login}" th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('usuario.login')}" th:errors="*{usuario.login}"></div>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label for="senha" class="form-label">Senha:</label>
-                <input type="password" class="form-control" id="senha" th:field="*{usuario.password}" required>
+                <input type="password" class="form-control" id="senha" th:field="*{usuario.password}" th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('usuario.password')}" th:errors="*{usuario.password}"></div>
             </div>
         </div>
+
         <div class="d-grid gap-2 d-md-block mt-4">
             <button type="submit" class="btn btn-primary">Salvar</button>
-            <a th:href="@{/login}" class="btn btn-secondary">Cancelar</a>
+
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-secondary">Cancelar</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/cliente/listClientes}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </main>
