@@ -27,20 +27,15 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(
                         customizer ->
                                 customizer
-                                        .requestMatchers("/h2-console/**").permitAll()
-                                        .requestMatchers("/carrinho/loja").permitAll()
-                                        .requestMatchers("/cliente/formFisico", "/cliente/formJuridico").permitAll()
-                                        .requestMatchers("/cliente/saveFisico", "/cliente/saveJuridico").permitAll()
-                                        .requestMatchers("/produto/**").hasAnyRole("ADMIN")
-                                        .requestMatchers("/venda/minhasCompras").permitAll()
-                                        .requestMatchers("/venda/**").hasAnyRole("ADMIN")
-                                        .requestMatchers("/cliente/**").hasAnyRole("ADMIN")
-                                        .requestMatchers(HttpMethod.POST,"/pessoafisica/save").permitAll()
+                                        .requestMatchers("/venda/minhasCompras",
+                                                "/carrinho/loja", "/carrinho/adicionar/**", "/carrinho/listar",
+                                                "/cliente/formFisico", "/cliente/formJuridico",
+                                                "/cliente/saveFisico", "/cliente/saveJuridico").permitAll()
+
+                                        .requestMatchers("/produto/**", "/venda/**", "/cliente/**").hasAnyRole("ADMIN")
                                         .anyRequest()
                                         .authenticated()
                 )
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .formLogin(customizer ->
                         customizer
                                 .loginPage("/login")
