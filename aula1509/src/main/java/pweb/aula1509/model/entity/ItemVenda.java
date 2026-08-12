@@ -1,7 +1,6 @@
 package pweb.aula1509.model.entity;
 
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 
 @Entity

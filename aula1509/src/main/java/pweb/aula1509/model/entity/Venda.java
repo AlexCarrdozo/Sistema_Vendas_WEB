@@ -1,7 +1,7 @@
 package pweb.aula1509.model.entity;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal; // Importante
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
