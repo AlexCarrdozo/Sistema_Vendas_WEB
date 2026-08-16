@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pweb.aula1509.model.entity.*;
-import pweb.aula1509.model.repository.PessoaRepository;
 import pweb.aula1509.model.repository.ProdutoRepository;
-import pweb.aula1509.model.repository.VendaRepository;
+import pweb.aula1509.service.FinalizacaoVenda;
 
-import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/carrinho")
@@ -24,10 +22,7 @@ public class CarrinhoController {
     private ProdutoRepository produtoRepository;
 
     @Autowired
-    private PessoaRepository pessoaRepository;
-
-    @Autowired
-    private VendaRepository vendaRepository;
+    private FinalizacaoVenda finalizacaoVenda;
 
     @GetMapping("/loja")
     public ModelAndView loja(ModelMap model) {
@@ -79,53 +74,26 @@ public class CarrinhoController {
         return "redirect:/carrinho/listar";
     }
 
-    /**
-     * Finaliza a venda: Pega da sessão -> Salva no Banco -> Limpa a sessão
-     */
+    //Finaliza a venda
     @PostMapping("/finalizar")
     public String finalizar(HttpSession session, RedirectAttributes redirectAttributes) {
-
         Venda venda = obterVendaDaSessao(session);
-
-        // 1. Pergunta ao Spring Security quem está logado
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Verifica se é um usuário anônimo (não logado)
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Você precisa estar logado para finalizar uma compra.");
             return "redirect:/login";
         }
 
-        // 2. Pega o login (ex: "admin", "Alex")
-        String login = auth.getName();
+        try {
+            finalizacaoVenda.processarFinalizacao(venda, auth.getName());
 
-        // 3. Busca a pessoa no banco usando o login
-        Pessoa cliente = pessoaRepository.findByUsuarioLogin(login);
+            session.removeAttribute("vendaSession");
+            redirectAttributes.addFlashAttribute("successMessage", "Venda realizada com sucesso!");
 
-        // 4. Valida se encontrou a pessoa
-        if (cliente == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Erro: O usuário logado (" + login + ") não tem um cadastro de Pessoa associado.");
-            return "redirect:/venda/minhasCompras";
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao finalizar: " + e.getMessage());
         }
-
-        // 5. Configura a venda
-        venda.setData(LocalDate.now());
-        venda.setPessoa(cliente);
-
-        // 6. Amarra os itens à venda (para evitar erro de chave estrangeira)
-        if (venda.getItens() != null) {
-            for (ItemVenda item : venda.getItens()) {
-                item.setVenda(venda);
-            }
-        }
-
-        // 7. Salva tudo
-        vendaRepository.save(venda);
-
-        // 8. Limpa o carrinho da sessão
-        session.removeAttribute("vendaSession");
-
-        redirectAttributes.addFlashAttribute("successMessage", "Venda realizada com sucesso!");
 
         return "redirect:/venda/minhasCompras";
     }
@@ -166,7 +134,6 @@ public class CarrinhoController {
                 double novaQtd = item.getQuantidade() - 1.0;
 
                 if (novaQtd <= 0) {
-                    // Se ficar zero ou menos, remove o item
                     venda.removerItem(id);
                 } else {
                     item.setQuantidade(novaQtd);
